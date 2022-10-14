@@ -4,35 +4,12 @@ function startGame(){
 
 function updateGameArea() {
   myGameArea.clear();
-  player.update();
   player.newPos();
   player.update();
-  //enemyMovement();
   updateEnemy();
   checkGameOver();
   myGameArea.score();
 }
-
-// function enemyMovement(){
-//   for (i=0; i<myEnemy.length; i++){
-//       if ((player.attractForceBelow(myEnemy[i]) && player.attractFieldRight(myEnemy[i])) = 'true'){
-//         myEnemy[i].speedY = -1
-//         myEnemy[i].speedX = -1
-//       }
-//       if ((player.attractForceAbove(myEnemy[i]) && player.attractFieldRight(myEnemy[i])) = 'true'){
-//         myEnemy[i].speedY = +1
-//         myEnemy[i].speedX = -1
-//       }
-//       if ((player.attractForceBelow(myEnemy[i]) && player.attractFieldLeft(myEnemy[i])) = 'true'){
-//         myEnemy[i].speedY = -1
-//         myEnemy[i].speedX = +1
-//       }
-//       if ((player.attractForceAbove(myEnemy[i]) && player.attractFieldLeft(myEnemy[i])) = 'true'){
-//         myEnemy[i].speedY = +1
-//         myEnemy[i].speedX = +1
-//       }
-//   }
-// }
 
 function updateEnemy() {
     for (i = 0; i < myEnemy.length; i++) {
@@ -56,7 +33,6 @@ function updateEnemy() {
           myEnemy[i].y += Math.floor(Math.random() * 6) * (Math.round(Math.random()) ? 1 : -1)
         }
       }
-      // myEnemy[i].x += -2
       myEnemy[i].update();
     }
 
@@ -64,7 +40,7 @@ function updateEnemy() {
   if (myGameArea.frames % 90 === 0) {
     let x = myGameArea.canvas.width;
     let y = Math.floor(Math.random() * (myGameArea.canvas.height-20));
-    myEnemy.push(new Component(20, 20, 'green', x, y));
+    myEnemy.push(new Component(20, 20, 'green', x, y, "/images/Wasp.png"));
   }
 }
 
@@ -106,10 +82,25 @@ const myGameArea = {
     this.context.fillStyle = 'black';
     this.context.fillText(`Score: ${points}`, 25, 25);
   },
+
+  // drawBackground (imageSource){
+  //   let daCtx = this.ctx;
+  //   this.img.src = imageSource;
+
+  //   daCtx.drawBackground(this.img, this.x, this.y, this.width, this.height);
+  // }
+
+  // drawBackground: function (){
+  //   const backgroundImage = new Image (this.canvas.width,this.canvas.height);
+  //   backgroundImage.src = "/images/background.png"
+  //   backgroundImage.onload = () =>{
+  //     ctx.drawImage (backgroundImage,0,0,this.width,this.height)
+  //   }
+  // }
 };
 
 class Component {
-  constructor(width, height, color, x, y) {
+  constructor(width, height, color, x, y, imageSource) {
     this.width = width;
     this.height = height;
     this.color = color;
@@ -117,13 +108,16 @@ class Component {
     this.y = y;
     this.speedX = 0;
     this.speedY = 0;
+    this.img = new Image ();
+    this.img.src = imageSource;
   }
  
   update() {
     const ctx = myGameArea.context;
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
+    //ctx.fillRect(this.x, this.y, this.width, this.height);
   }
+
   newPos() {
     this.newPosX();
     this.newPosY();
@@ -182,26 +176,8 @@ class Component {
   attractFieldBottom() {
     return this.y + this.height + 5;
   }
-
-
-
-  // attractForceBelow(obstacle) {
-  //   return !(this.attractFieldBottom() < obstacle.top());
-  // }
-
-  // attractForceAbove(obstacle) {
-  //   return !(this.attractFieldTop() > obstacle.bottom());
-  // }
-
-  // attractForceRight(obstacle) {
-  //   return !(this.attractFieldRight() < obstacle.left());
-  // }
-
-  // attractForceLeft(obstacle) {
-  //   return !(this.attractFieldLeft() > obstacle.right());
-  // }
 }
-const player = new Component(60, 60, 'red', 420,220);
+const player = new Component(60, 60, 'red', 420, 220, "/images/SantaGif.gif");
 
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode) {
