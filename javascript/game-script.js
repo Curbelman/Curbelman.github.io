@@ -37,26 +37,26 @@ function updateGameArea() {
 function updateEnemy() {
     for (i = 0; i < myEnemy.length; i++) {
       if(myEnemy[i].x<=player.x+player.width+90 && myEnemy[i].x>player.x && myEnemy[i].y<=player.y+player.height+90 && myEnemy[i].y>player.y){
-        myEnemy[i].x += -4;
+        myEnemy[i].x += -5;
         myEnemy[i].y += -2;
       } 
       else if (myEnemy[i].x<=player.x+player.width+90 && myEnemy[i].x>player.x && myEnemy[i].y+myEnemy[i].height>=player.y-90 && myEnemy[i].y+myEnemy[i].height<player.y){
-        myEnemy[i].x += -4;
+        myEnemy[i].x += -5;
         myEnemy[i].y += +2;
       }
       else {
-        myEnemy[i].x += -2
+        myEnemy[i].x += -2;
+        if (myEnemy[i].y + myEnemy[i].height + (Math.floor(Math.random() * 6) * (Math.round(Math.random()) ? 1 : -1)) > 500){
+          myEnemy[i].y += (500 - (myEnemy[i].y + myEnemy[i].height));
+        }
+        else if (myEnemy[i].y + (Math.floor(Math.random() * 6) * (Math.round(Math.random()) ? 1 : -1)) < 0){
+          myEnemy[i].y -= myEnemy[i].y
+        }
+        else{
+          myEnemy[i].y += Math.floor(Math.random() * 6) * (Math.round(Math.random()) ? 1 : -1)
+        }
       }
-      //  if ((player.attractForceBelow(myEnemy[i]) && player.attractFieldRight(myEnemy[i]))){
-      //   myEnemy[i].x += -3
-      //   myEnemy[i].y += -1}
-      //   else if ((player.attractForceAbove(myEnemy[i]) && player.attractFieldRight(myEnemy[i]))){
-      //   myEnemy[i].speedY = -1
-      //   myEnemy[i].speedX = -3
-      //   }
-      //   else {
-      myEnemy[i].x += -2
-        // }
+      // myEnemy[i].x += -2
       myEnemy[i].update();
     }
 
