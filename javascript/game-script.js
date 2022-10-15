@@ -40,7 +40,7 @@ function updateEnemy() {
   if (myGameArea.frames % 90 === 0) {
     let x = myGameArea.canvas.width;
     let y = Math.floor(Math.random() * (myGameArea.canvas.height-20));
-    myEnemy.push(new Component(20, 20, 'green', x, y, "/images/Wasp.png"));
+    myEnemy.push(new Component(20, 20, 'green', x, y, "/images/transparent wasp.png"));
   }
 }
 
@@ -68,6 +68,12 @@ const myGameArea = {
     this.interval = setInterval(updateGameArea, 20);
   },
 
+  // drawBackground: function (){
+  //   this.backgroundImg.src= "/images/background.png";
+  //   this.ctx.drawImage(this.backgroundImg,
+  //   )
+  // }
+
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
@@ -82,21 +88,6 @@ const myGameArea = {
     this.context.fillStyle = 'black';
     this.context.fillText(`Score: ${points}`, 25, 25);
   },
-
-  // drawBackground (imageSource){
-  //   let daCtx = this.ctx;
-  //   this.img.src = imageSource;
-
-  //   daCtx.drawBackground(this.img, this.x, this.y, this.width, this.height);
-  // }
-
-  // drawBackground: function (){
-  //   const backgroundImage = new Image (this.canvas.width,this.canvas.height);
-  //   backgroundImage.src = "/images/background.png"
-  //   backgroundImage.onload = () =>{
-  //     ctx.drawImage (backgroundImage,0,0,this.width,this.height)
-  //   }
-  // }
 };
 
 class Component {
@@ -177,7 +168,8 @@ class Component {
     return this.y + this.height + 5;
   }
 }
-const player = new Component(60, 60, 'red', 420, 220, "/images/SantaGif.gif");
+
+const player = new Component(60, 60, 'red', 420, 220, "/images/SantaManTransparent.png");
 
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode) {
