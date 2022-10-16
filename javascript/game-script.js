@@ -4,12 +4,27 @@ function startGame(){
 
 function updateGameArea() {
   myGameArea.clear();
+  background.update();
   player.newPos();
   player.update();
+  updateCats();
   updateEnemy();
+  checkPetCat();
+  checkEnemyCrash();
   checkGameOver();
   myGameArea.score();
+  myGameArea.lives();
 }
+
+function difficultySetting(){
+  if (points >= 5 || myGameArea.frames > 9000){
+    return 60;
+  }
+  else {
+    return 90;
+  }
+}
+
 
 function updateEnemy() {
     for (i = 0; i < myEnemy.length; i++) {
@@ -36,25 +51,67 @@ function updateEnemy() {
       myEnemy[i].update();
     }
 
+    // if (myEnemy[i].x < 0){
+    //   myEnemy[i].splice(i,1);
+    // }
+
   myGameArea.frames += 1;
-  if (myGameArea.frames % 90 === 0) {
+  if (myGameArea.frames % (difficultySetting()) === 0) {
     let x = myGameArea.canvas.width;
     let y = Math.floor(Math.random() * (myGameArea.canvas.height-20));
     myEnemy.push(new Component(20, 20, 'green', x, y, "/images/transparent wasp.png"));
   }
 }
 
+function updateCats(){
+  for (i=0;i<myCats.length;i++){
+    if (myCats[i].x < 0){
+      myCats.splice(i,1);
+    }
+    else{
+      myCats[i].x += -1;
+    }
+    myCats[i].update();
+  }
+
+  if (myGameArea.frames % 270 === 0 && myGameArea.frames > 1) {
+   let x = myGameArea.canvas.width;
+   let y = Math.floor(Math.random() * (myGameArea.canvas.height-40));
+   myCats.push (new Component(40, 40, 'blue', x, y, "/images/Cat.png"));
+    }
+}
+
+let points = 0;
+
+function checkPetCat (){
+  for (i=0; i<myCats.length; i++){
+    if (player.crashWith(myCats[i])){
+      points += 1
+      myCats.splice(i,1)
+    }
+  }
+}
+
+let playerLives = 3;
+
+function checkEnemyCrash(){
+  for (i=0; i<myEnemy.length; i++){
+    if (player.crashWith(myEnemy[i])){
+      playerLives -= 1;
+      myEnemy.splice(i,1)
+    }
+  }
+}
+
 function checkGameOver() {
-  const crashed = myEnemy.some(function (obstacle) {
-    return player.crashWith(obstacle);
-  });
- 
-  if (crashed) {
+  if (playerLives <= 0){
     myGameArea.stop();
   }
 }
 
 const myEnemy = [];
+
+const myCats = [];
 
 const myGameArea = {
   canvas: document.createElement('canvas'),
@@ -68,12 +125,6 @@ const myGameArea = {
     this.interval = setInterval(updateGameArea, 20);
   },
 
-  // drawBackground: function (){
-  //   this.backgroundImg.src= "/images/background.png";
-  //   this.ctx.drawImage(this.backgroundImg,
-  //   )
-  // }
-
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
@@ -83,10 +134,15 @@ const myGameArea = {
   },
 
   score: function () {
-    const points = Math.floor(this.frames / 5);
-    this.context.font = '18px Copperplate, Papyrus, fantasy';
+    this.context.font = '32px Copperplate, Papyrus, fantasy';
     this.context.fillStyle = 'black';
     this.context.fillText(`Score: ${points}`, 25, 25);
+  },
+
+  lives: function(){
+    this.context.font = '32px Copperplate, Papyrus, fantasy';
+    this.context.fillStyle = 'black';
+    this.context.fillText(`Lives: ${playerLives}`, 750, 25);
   },
 };
 
@@ -171,35 +227,39 @@ class Component {
 
 const player = new Component(60, 60, 'red', 420, 220, "/images/SantaManTransparent.png");
 
+const background = new Component(900, 500, 'red', 0,0, "/images/grass background.png");
+
+
+
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode) {
     case 38: // up arrow
-    if (player.speedY >= -7){
-      player.speedY -= 3;
+    if (player.speedY >= -5){
+      player.speedY -= 5;
     }
     else {
       player.speedY = -10;
     }
       break;
     case 40: // down arrow
-    if (player.speedY <= 7){
-      player.speedY += 3;
+    if (player.speedY <= 5){
+      player.speedY += 5;
     }
     else {
       player.speedY = 10;
     }
       break;
     case 37: // left arrow
-    if (player.speedX >= -7){
-      player.speedX -= 3;
+    if (player.speedX >= -5){
+      player.speedX -= 5;
     }
     else {
       player.speedX = -10;
     }
       break;
     case 39: // right arrow
-    if (player.speedX <= 7){
-      player.speedX += 3;
+    if (player.speedX <= 5){
+      player.speedX += 5;
     }
     else {
       player.speedX = 10;
