@@ -137,6 +137,22 @@ function checkEnemyCrash(){
 function checkGameOver() {
   if (playerLives <= 0){
     myGameArea.stop();
+    backgroundMusic.stop();
+  }
+}
+
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
   }
 }
 
@@ -150,6 +166,8 @@ let playerLives = 3;
 
 let points = 0;
 
+const backgroundMusic = new sound("/sounds/cyberpunk-street.mp3");
+
 const myGameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
@@ -158,6 +176,7 @@ const myGameArea = {
     this.canvas.height = 500;
     this.canvas.style = 'border: 1px solid black;';
     this.context = this.canvas.getContext('2d');
+    backgroundMusic.play();
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     this.interval = setInterval(updateGameArea, 20);
   },
@@ -267,8 +286,6 @@ const player = new Component(60, 60, 'red', 420, 220, "/images/SantaManTranspare
 
 const background = new Component(900, 500, 'red', 0,0, "/images/grass background.png");
 
-
-
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode) {
     case 38: // up arrow
@@ -310,6 +327,5 @@ document.addEventListener('keyup', (e) => {
   player.speedX = 0;
   player.speedY = 0;
 });
-
 
 startGame();
