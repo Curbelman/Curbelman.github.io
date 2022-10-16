@@ -9,15 +9,20 @@ function updateGameArea() {
   player.update();
   updateCats();
   updateEnemy();
+  updateShrooms();
   checkPetCat();
   checkEnemyCrash();
+  checkEatShroom();
   checkGameOver();
   myGameArea.score();
   myGameArea.lives();
 }
 
 function difficultySetting(){
-  if (points >= 5 || myGameArea.frames > 9000){
+  if (points >= 10 || myGameArea.frames > 90000){
+    return 30;
+  }
+  else if (points >= 5 || myGameArea.frames > 45000){
     return 60;
   }
   else {
@@ -28,7 +33,10 @@ function difficultySetting(){
 
 function updateEnemy() {
     for (i = 0; i < myEnemy.length; i++) {
-      if(myEnemy[i].x<=player.x+player.width+90 && myEnemy[i].x>player.x && myEnemy[i].y<=player.y+player.height+90 && myEnemy[i].y>player.y){
+      if (myEnemy[i].x < 0){
+        myEnemy.splice(i,1);
+      }
+      else if(myEnemy[i].x<=player.x+player.width+90 && myEnemy[i].x>player.x && myEnemy[i].y<=player.y+player.height+90 && myEnemy[i].y>player.y){
         myEnemy[i].x += -5;
         myEnemy[i].y += -2;
       } 
@@ -50,10 +58,6 @@ function updateEnemy() {
       }
       myEnemy[i].update();
     }
-
-    // if (myEnemy[i].x < 0){
-    //   myEnemy[i].splice(i,1);
-    // }
 
   myGameArea.frames += 1;
   if (myGameArea.frames % (difficultySetting()) === 0) {
@@ -81,7 +85,36 @@ function updateCats(){
     }
 }
 
-let points = 0;
+
+
+function updateShrooms(){
+  for (i=0;i<shrooms.length;i++){
+    if (shrooms[i].time > 600){
+      shrooms.splice(i,1);
+    }
+    else{
+      shrooms[i].time += 1;
+    }
+    shrooms[i].update();
+  }
+
+  if (myGameArea.frames % 1200 === 0 && myGameArea.frames > 1) {
+   let x = Math.floor(Math.random() * (myGameArea.canvas.width-30));
+   let y = Math.floor(Math.random() * (myGameArea.canvas.height-30));
+   shrooms.push (new Component(30, 30, 'blue', x, y, "/images/Mushroom.png"));
+    }
+}
+
+function checkEatShroom(){
+  for (i=0; i<shrooms.length;i++){
+    if(player.crashWith(shrooms[i])){
+      if (playerLives<3){
+        playerLives += 1
+      }
+      shrooms.splice(i,1)
+    }
+  }
+}
 
 function checkPetCat (){
   for (i=0; i<myCats.length; i++){
@@ -91,8 +124,6 @@ function checkPetCat (){
     }
   }
 }
-
-let playerLives = 3;
 
 function checkEnemyCrash(){
   for (i=0; i<myEnemy.length; i++){
@@ -112,6 +143,12 @@ function checkGameOver() {
 const myEnemy = [];
 
 const myCats = [];
+
+const shrooms = [];
+
+let playerLives = 3;
+
+let points = 0;
 
 const myGameArea = {
   canvas: document.createElement('canvas'),
@@ -155,6 +192,7 @@ class Component {
     this.y = y;
     this.speedX = 0;
     this.speedY = 0;
+    this.time = 0;
     this.img = new Image ();
     this.img.src = imageSource;
   }
