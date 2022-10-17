@@ -10,12 +10,16 @@ function updateGameArea() {
   updateCats();
   updateEnemy();
   updateShrooms();
+  updateBullets();
   checkPetCat();
+  checkEnemyShot();
+  checkCatShot();
   checkEnemyCrash();
   checkEatShroom();
   checkGameOver();
   myGameArea.score();
   myGameArea.lives();
+  myGameArea.ammo();
 }
 
 function difficultySetting(){
@@ -85,6 +89,27 @@ function updateCats(){
     }
 }
 
+function updateBullets(){
+  for (i=0; i<bullets.length; i++){
+    if (bullets[i].x > myGameArea.canvas.width){
+      bullets.splice(i,1);
+    }
+    else {
+      bullets[i].x += 20;
+    }
+    bullets[i].update();
+  }
+
+  if (ammunition <= 0){
+    if (reloadTime >= 300){
+      ammunition = 6;
+      reloadTime = 0;
+    }
+    else {
+      reloadTime += 1;
+    }
+  }
+}
 
 
 function updateShrooms(){
@@ -134,6 +159,29 @@ function checkEnemyCrash(){
   }
 }
 
+function checkEnemyShot(){
+  for(i=0; i<bullets.length; i++){
+    for (j=0; j<myEnemy.length; j++){
+      if (bullets[i].crashWith(myEnemy[j])){
+        myEnemy.splice(j,1);
+        bullets.splice(i,1);
+      }
+    }
+  }
+}
+
+function checkCatShot(){
+  for(i=0; i<bullets.length; i++){
+    for (j=0; j<myCats.length; j++){
+      if (bullets[i].crashWith(myCats[j])){
+        myCats.splice(j,1);
+        bullets.splice(i,1);
+        points += -1
+      }
+    }
+  }
+}
+
 function checkGameOver() {
   if (playerLives <= 0){
     myGameArea.stop();
@@ -162,9 +210,15 @@ const myCats = [];
 
 const shrooms = [];
 
+const bullets = [];
+
 let playerLives = 3;
 
 let points = 0;
+
+let ammunition = 6;
+
+let reloadTime = 0;
 
 const backgroundMusic = new sound("/sounds/cyberpunk-street.mp3");
 
@@ -200,6 +254,12 @@ const myGameArea = {
     this.context.fillStyle = 'black';
     this.context.fillText(`Lives: ${playerLives}`, 750, 25);
   },
+
+  ammo: function(){
+    this.context.font = '32px Copperplate, Papyrus, fantasy';
+    this.context.fillStyle = 'black';
+    this.context.fillText(`Bullets: ${ammunition}`, 25, 475);
+  }
 };
 
 class Component {
@@ -220,6 +280,15 @@ class Component {
     const ctx = myGameArea.context;
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
     //ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  shoot(){
+    if (ammunition > 0){
+    let x = this.x + this.width;
+    let y = this.y + this.height/2;
+    bullets.push (new Component(5, 2, 'blue', x, y, "/images/Bullet.png"));
+    ammunition -= 1;
+    }
   }
 
   newPos() {
@@ -320,6 +389,8 @@ document.addEventListener('keydown', (e) => {
       player.speedX = 10;
     }
       break;
+    case 32: // spacebar
+    player.shoot();
   }
 });
 
