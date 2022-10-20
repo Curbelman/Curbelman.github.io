@@ -22,7 +22,7 @@ class Component {
       if (ammunition > 0){
       let x = this.x + this.width;
       let y = this.y + this.height/2;
-      bullets.push (new Component(5, 2, 'blue', x, y, "/images/Bullet.png"));
+      bullets.push (new Component(8, 3, 'blue', x, y, "/images/Bullet.png"));
       ammunition -= 1;
       shootSound.play();
       }

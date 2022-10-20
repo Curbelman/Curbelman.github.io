@@ -1,11 +1,13 @@
 window.onload = () => {
    
   //const canvas = document.querySelector("#myCanvas")
-  const intro = document.querySelector('.intro')
+ 
 
   document.getElementById('start').onclick = () => {
-      intro.style.display="none";
-      //caja.classList.add('hidden')
+     const intro = document.getElementById('intro')
+      intro.remove();
       startGame();
+      //caja.classList.add('hidden')
+      console.log('hola');
   }
 }
